@@ -1,0 +1,10 @@
+{
+  "name": "Sinau \u2013 Buat Prototipe",
+  "id": "sinau-prototipe-kelompok4",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": [
+    "figma"
+  ],
+  "documentAccess": "dynamic-page"
+}
