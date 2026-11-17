@@ -3,6 +3,8 @@
 **Sinau** (bahasa Jawa: *belajar*) adalah aplikasi belajar pemrograman dari dasar (**Python** & **Java**)
 untuk UAS Praktikum Mobile Programming — UIN Maulana Malik Ibrahim Malang.
 
+🌐 **Coba versi web:** https://zidney953-commits.github.io/Sinau/
+
 Materi disusun bertahap per **Tugas → Pembahasan**: baca materi singkat, kerjakan 3 soal, kumpulkan XP,
 jaga streak harian, dan bersaing di papan peringkat. Admin mengelola materi dan memantau kemampuan belajar user.
 
