@@ -148,3 +148,25 @@ class LessonProgress {
         'attempts': attempts, 'correct': correct, 'total': total,
       };
 }
+
+/// Berita teknologi dari Edge Function `tech-news` (RSS Antara Tekno & CNN Indonesia Teknologi).
+class NewsItem {
+  final String title, link, source, summary;
+  final String? image;
+  final DateTime? published;
+  NewsItem.fromJson(Map<String, dynamic> j)
+      : title = j['title'] ?? '',
+        link = j['link'] ?? '',
+        source = j['source'] ?? '',
+        summary = j['summary'] ?? '',
+        image = j['image'],
+        published = DateTime.tryParse(j['published'] ?? '')?.toLocal();
+}
+
+/// Gambar promosi (assets/Gambar) beserta ukurannya untuk menentukan rasio tampilan.
+class PromoImage {
+  final String asset;
+  final int width, height;
+  const PromoImage(this.asset, this.width, this.height);
+  double get ratio => width / height;
+}

@@ -31,7 +31,7 @@ class UserShell extends StatelessWidget {
         fab: FloatingActionButton(
           heroTag: 'fb',
           tooltip: 'Kirim saran atau laporkan error',
-          backgroundColor: C.ink,
+          backgroundColor: C.night,
           foregroundColor: Colors.white,
           elevation: 2,
           onPressed: () => Get.bottomSheet(FeedbackSheet(page: _names[nav.tab.value]), isScrollControlled: true),

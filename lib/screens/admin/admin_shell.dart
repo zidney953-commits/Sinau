@@ -15,13 +15,14 @@ import 'lesson_editor.dart';
 const _bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 const _hari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
 const _bulanPanjang = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-const cOk = C.ok, cHard = Color(0xFFE39A0A);
+Color get cOk => C.ok;
+const cHard = Color(0xFFE39A0A);
 
 /// Tombol profil admin (ikon perisai) di kanan atas setiap halaman admin.
 Widget adminProfileButton() => IconButton(
       tooltip: 'Profil',
       onPressed: () => Get.to(() => const ProfileScreen(showBack: true)),
-      icon: const CircleAvatar(radius: 18, backgroundColor: C.ink, child: Icon(Icons.shield_outlined, color: Colors.white, size: 18)),
+      icon: CircleAvatar(radius: 18, backgroundColor: C.night, child: Icon(Icons.shield_outlined, color: Colors.white, size: 18)),
     );
 
 class AdminShell extends StatelessWidget {
@@ -91,7 +92,7 @@ class DashboardTab extends StatelessWidget {
       title: 'Pendaftar baru per bulan',
       subtitle: 'Jumlah akun baru yang mendaftar setiap bulan · 6 bulan terakhir',
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('${_bulanPanjang[now.month - 1]} ${now.year} (s.d. ${now.day} ${_bulan[now.month - 1]})', style: const TextStyle(color: C.ink3, fontSize: 12)),
+        Text('${_bulanPanjang[now.month - 1]} ${now.year} (s.d. ${now.day} ${_bulan[now.month - 1]})', style: TextStyle(color: C.ink3, fontSize: 12)),
         Wrap(crossAxisAlignment: WrapCrossAlignment.center, spacing: 10, runSpacing: 6, children: [
           Text('$cur pendaftar baru', style: GoogleFonts.rubik(fontSize: 24, fontWeight: FontWeight.w700)),
           Pill(
@@ -161,7 +162,7 @@ class DashboardTab extends StatelessWidget {
                   onTap: () => c.lang.value = l.id,
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 9),
-                    decoration: BoxDecoration(color: c.lang.value == l.id ? Colors.white : Colors.transparent, borderRadius: BorderRadius.circular(11)),
+                    decoration: BoxDecoration(color: c.lang.value == l.id ? C.surface : Colors.transparent, borderRadius: BorderRadius.circular(11)),
                     child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Icon(Icons.code_rounded, size: 17, color: Color(l.color)),
                       const SizedBox(width: 6),
@@ -173,7 +174,7 @@ class DashboardTab extends StatelessWidget {
           ]),
         ),
         const SizedBox(height: 12),
-        const Wrap(spacing: 14, runSpacing: 4, children: [
+        Wrap(spacing: 14, runSpacing: 4, children: [
           _Legend(cOk, 'Bisa · lulus di percobaan pertama'),
           _Legend(cHard, 'Kesusahan · perlu mengulang'),
         ]),
@@ -185,10 +186,10 @@ class DashboardTab extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(color: C.reward50, borderRadius: BorderRadius.circular(14)),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Icon(Icons.warning_amber_rounded, color: Color(0xFF8A5A00), size: 20),
+              Icon(Icons.warning_amber_rounded, color: C.rewardInk, size: 20),
               const SizedBox(width: 8),
               Expanded(
-                child: Text.rich(TextSpan(style: const TextStyle(color: Color(0xFF5C3D00)), children: [
+                child: Text.rich(TextSpan(style: TextStyle(color: C.rewardInk2), children: [
                   const TextSpan(text: 'Paling banyak kesusahan: '),
                   TextSpan(text: 'Tugas ${hardest.$1 + 1} · ${hardest.$2.title}', style: const TextStyle(fontWeight: FontWeight.w800)),
                   TextSpan(text: ' (${(hardestPct * 100).round()}% perlu mengulang). Pertimbangkan memperjelas materinya.'),
@@ -228,14 +229,14 @@ class DashboardTab extends StatelessWidget {
         const SizedBox(height: 4),
         Row(children: [
           if (n == 0)
-            const Text('Belum ada yang mencoba', style: TextStyle(color: C.ink3, fontSize: 12))
+            Text('Belum ada yang mencoba', style: TextStyle(color: C.ink3, fontSize: 12))
           else ...[
             _Legend(cOk, '$po% bisa', small: true),
             const SizedBox(width: 10),
             _Legend(cHard, '${100 - po}% kesusahan', small: true),
           ],
           const Spacer(),
-          Text('${r.$5} pengguna', style: const TextStyle(color: C.ink3, fontSize: 12)),
+          Text('${r.$5} pengguna', style: TextStyle(color: C.ink3, fontSize: 12)),
         ]),
       ]),
     );
@@ -254,7 +255,7 @@ class DashboardTab extends StatelessWidget {
           border: TableBorder.all(color: C.line),
           columnWidths: const {0: FlexColumnWidth(2.4)},
           children: [
-            TableRow(decoration: const BoxDecoration(color: C.bg2), children: [
+            TableRow(decoration: BoxDecoration(color: C.bg2), children: [
               for (final h in head) Padding(padding: const EdgeInsets.all(8), child: Text(h, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12))),
             ]),
             for (final r in rows)
@@ -390,7 +391,7 @@ class ContentTab extends StatelessWidget {
 
   Widget _unitCard(Unit u, int no) => Container(
         clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
+        decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Container(
             padding: const EdgeInsets.fromLTRB(14, 10, 4, 10),
@@ -405,13 +406,13 @@ class ContentTab extends StatelessWidget {
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text('Tugas $no · ${u.title}', style: GoogleFonts.rubik(fontWeight: FontWeight.w600)),
-                  Text('${u.lessons.length} pembahasan · ${u.lessons.where((l) => l.published).length} terbit', style: const TextStyle(color: C.ink3, fontSize: 12)),
+                  Text('${u.lessons.length} pembahasan · ${u.lessons.where((l) => l.published).length} terbit', style: TextStyle(color: C.ink3, fontSize: 12)),
                 ]),
               ),
               PopupMenuButton<String>(
                 tooltip: 'Opsi tugas',
                 onSelected: (a) => _unitMenu(a, u, no),
-                itemBuilder: (_) => const [
+                itemBuilder: (_) => [
                   PopupMenuItem(value: 'rename', child: ListTile(leading: Icon(Icons.edit_outlined), title: Text('Ubah judul'), contentPadding: EdgeInsets.zero)),
                   PopupMenuItem(value: 'delete', child: ListTile(leading: Icon(Icons.delete_outline, color: C.err), title: Text('Hapus tugas', style: TextStyle(color: C.err)), contentPadding: EdgeInsets.zero)),
                 ],
@@ -440,15 +441,15 @@ class ContentTab extends StatelessWidget {
                 PopupMenuButton<String>(
                   tooltip: 'Opsi pembahasan',
                   onSelected: (a) => a == 'edit' ? _openEditor(u, no, l) : _deleteLesson(l),
-                  itemBuilder: (_) => const [
+                  itemBuilder: (_) => [
                     PopupMenuItem(value: 'edit', child: Text('Ubah')),
                     PopupMenuItem(value: 'delete', child: Text('Hapus', style: TextStyle(color: C.err))),
                   ],
                 ),
               ]),
             ),
-          if (u.lessons.isEmpty) const Padding(padding: EdgeInsets.all(14), child: Text('Belum ada pembahasan di tugas ini.', style: TextStyle(color: C.ink3))),
-          const Divider(height: 1, color: C.line),
+          if (u.lessons.isEmpty) Padding(padding: EdgeInsets.all(14), child: Text('Belum ada pembahasan di tugas ini.', style: TextStyle(color: C.ink3))),
+          Divider(height: 1, color: C.line),
           TextButton.icon(
             style: TextButton.styleFrom(padding: const EdgeInsets.all(14)),
             onPressed: () => _openEditor(u, no),
@@ -493,10 +494,10 @@ class MembersTab extends StatelessWidget {
                       const StateView(icon: Icons.group_outlined, title: 'Tidak ada anggota', body: 'Tidak ada user yang cocok dengan pencarian atau filter ini.')
                     else
                       Container(
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
+                        decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
                         child: Column(children: [
                           for (var i = 0; i < xs.length; i++) ...[
-                            if (i > 0) const Divider(height: 1, color: C.line),
+                            if (i > 0) Divider(height: 1, color: C.line),
                             ListTile(
                               leading: Avatar(xs[i].name, url: xs[i].avatarUrl),
                               title: Text(xs[i].name, style: GoogleFonts.rubik(fontWeight: FontWeight.w600)),
@@ -536,7 +537,7 @@ class MembersTab extends StatelessWidget {
 class FeedbackTab extends StatelessWidget {
   const FeedbackTab({super.key});
   FeedbackController get c => Get.find<FeedbackController>();
-  static const _status = {'baru': ('Baru', Color(0xFF8A5A00), C.reward50), 'proses': ('Diproses', C.primary, C.primary50), 'selesai': ('Selesai', C.ok, C.ok50)};
+  static Map<String, (String, Color, Color)> get _status => {'baru': ('Baru', C.rewardInk, C.reward50), 'proses': ('Diproses', C.primary, C.primary50), 'selesai': ('Selesai', C.ok, C.ok50)};
 
   @override
   Widget build(BuildContext context) => SafeArea(
@@ -592,7 +593,7 @@ class FeedbackTab extends StatelessWidget {
         Row(children: [
           Avatar(f.userName ?? '?', size: 26),
           const SizedBox(width: 8),
-          Expanded(child: Text('${f.userName ?? 'Pengguna'} · ${f.createdAt.day} ${_bulan[f.createdAt.month - 1]} ${f.createdAt.year}', style: const TextStyle(color: C.ink3, fontSize: 12))),
+          Expanded(child: Text('${f.userName ?? 'Pengguna'} · ${f.createdAt.day} ${_bulan[f.createdAt.month - 1]} ${f.createdAt.year}', style: TextStyle(color: C.ink3, fontSize: 12))),
           PopupMenuButton<String>(
             tooltip: 'Ubah status',
             onSelected: (s) async {
@@ -604,7 +605,7 @@ class FeedbackTab extends StatelessWidget {
               }
             },
             itemBuilder: (_) => [for (final s in _status.entries) PopupMenuItem(value: s.key, child: Text(s.value.$1))],
-            child: const Padding(padding: EdgeInsets.all(4), child: Text('Ubah status', style: TextStyle(color: C.primary, fontWeight: FontWeight.w800))),
+            child: Padding(padding: EdgeInsets.all(4), child: Text('Ubah status', style: TextStyle(color: C.primary, fontWeight: FontWeight.w800))),
           ),
         ]),
       ]),

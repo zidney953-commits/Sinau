@@ -1,3 +1,7 @@
+import 'dart:math';
+import 'dart:ui' as ui;
+
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../data/models.dart';
@@ -215,6 +219,8 @@ class UserBinding extends Bindings {
   void dependencies() {
     Get.put(NavController());
     Get.put(LearnController());
+    Get.put(NewsController());
+    Get.put(PromoController());
     Get.put(RankController());
     Get.put(InfoController());
   }
@@ -246,4 +252,43 @@ class StreakController extends GetxController {
   void setMonth(int m) => _set(DateTime.utc(month.value.year, m));
   void setYear(int y) => _set(DateTime.utc(y, month.value.month));
   void _set(DateTime m) => month.value = m.isAfter(thisMonth) ? thisMonth : m;
+}
+
+/// Berita TI di halaman Belajar: diambil dari Edge Function, lalu dipilih acak per hari
+/// (urutan berganti setiap tanggal, isi berita mengikuti RSS terbaru).
+class NewsController extends LoadController<List<NewsItem>> {
+  static const perDay = 6;
+
+  @override
+  Future<List<NewsItem>> fetch() async {
+    final all = await Repo.techNews();
+    final now = DateTime.now();
+    final seed = now.year * 10000 + now.month * 100 + now.day;
+    // Utamakan berita 3 hari terakhir supaya tetap "kekinian".
+    final fresh = all.where((n) => n.published == null || now.difference(n.published!).inDays < 3).toList();
+    final pool = fresh.length >= perDay ? fresh : all;
+    return (List.of(pool)..shuffle(Random(seed))).take(perDay).toList();
+  }
+}
+
+/// Postingan promosi APK: semua gambar di folder assets/Gambar + rasio aslinya.
+class PromoController extends LoadController<List<PromoImage>> {
+  final page = 0.obs;
+
+  @override
+  Future<List<PromoImage>> fetch() async {
+    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final paths = manifest.listAssets().where((a) => a.startsWith('assets/Gambar/')).toList()..sort();
+    final out = <PromoImage>[];
+    for (final a in paths) {
+      // Baca ukuran asli gambar (dipakai untuk rasio 3:4 … 16:9). Cara ini jalan di Android, iOS, dan web.
+      final data = await rootBundle.load(a);
+      final codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+      final img = (await codec.getNextFrame()).image;
+      out.add(PromoImage(a, img.width, img.height));
+      img.dispose();
+      codec.dispose();
+    }
+    return out;
+  }
 }

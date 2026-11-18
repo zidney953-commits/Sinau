@@ -43,21 +43,21 @@ class AboutScreen extends StatelessWidget {
                           const TextSpan(text: 'Powered by '),
                           TextSpan(text: AppConfig.brand, style: GoogleFonts.rubik(fontWeight: FontWeight.w800, color: C.ink, letterSpacing: 1)),
                         ]),
-                        style: const TextStyle(color: C.ink2),
+                        style: TextStyle(color: C.ink2),
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Center(
+                    Center(
                       child: Text('APK Sinau - Terbit ${AppConfig.releaseDate}', style: TextStyle(color: C.ink3, fontSize: 12.5)),
                     ),
                     const SizedBox(height: 22),
                     Container(
                       padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
+                      decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text('Apa itu SINAU?', style: GoogleFonts.rubik(fontSize: 18, fontWeight: FontWeight.w700)),
                         const SizedBox(height: 8),
-                        const Text(
+                        Text(
                           'Sinau (bahasa Jawa: “belajar”) adalah aplikasi belajar pemrograman dari dasar untuk siapa saja, '
                           'terutama pemula yang masih bingung harus mulai dari mana. Aplikasi ini dibuat agar belajar '
                           'pemrograman terasa lebih mudah dan konsisten: materi disusun bertahap dalam bahasa Indonesia, '

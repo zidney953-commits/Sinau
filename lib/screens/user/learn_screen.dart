@@ -11,6 +11,7 @@ import '../../data/models.dart';
 import '../../data/streak.dart';
 import '../../widgets/common.dart';
 import '../../widgets/responsive.dart';
+import 'learn_extras.dart';
 import 'lesson_screen.dart';
 
 const unitIcons = [Icons.memory_rounded, Icons.data_object_rounded, Icons.call_split_rounded, Icons.loop_rounded];
@@ -27,7 +28,10 @@ class LearnScreen extends StatelessWidget {
     final auth = Get.find<AuthController>();
     return SafeArea(
       child: RefreshIndicator(
-        onRefresh: () async => _reload(),
+        onRefresh: () async {
+          Get.find<NewsController>().load();
+          await _reload();
+        },
         child: ObxLoad<LearnData>(
           controller: c,
           builder: (d) {
@@ -38,7 +42,7 @@ class LearnScreen extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      const Text('Halo,', style: TextStyle(color: C.ink3, fontSize: 12)),
+                      Text('Halo,', style: TextStyle(color: C.ink3, fontSize: 12)),
                       Text(p.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.rubik(fontSize: 20, fontWeight: FontWeight.w700)),
                     ]),
                   ),
@@ -49,10 +53,12 @@ class LearnScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 _TargetCard(xp: d.xpToday, lastChance: d.streak.lastChance),
                 const SizedBox(height: 22),
-                Text('Belajar', style: GoogleFonts.rubik(fontSize: 22, fontWeight: FontWeight.w700)),
-                const Text('Pilih bahasa pemrograman', style: TextStyle(color: C.ink3, fontSize: 12.5)),
+                const NewsSection(),
+                const SizedBox(height: 24),
+                Text('Belajar Bahasa Pemrograman', style: GoogleFonts.rubik(fontSize: 22, fontWeight: FontWeight.w700)),
+                Text('Pilih salah satu bahasa di bawah', style: TextStyle(color: C.ink3, fontSize: 12.5)),
                 const SizedBox(height: 10),
-                const Text('Mau belajar dasar pemrograman dengan bahasa apa? Materi dan tugasnya sama, hanya contoh kodenya yang berbeda.',
+                Text('Mau belajar dasar pemrograman dengan bahasa apa? Materi dan tugasnya sama, hanya contoh kodenya yang berbeda.',
                     style: TextStyle(color: C.ink2, height: 1.5)),
                 const SizedBox(height: 16),
                 ResponsiveColumns(children: [
@@ -62,6 +68,8 @@ class LearnScreen extends StatelessWidget {
                       _reload();
                     }),
                 ]),
+                const SizedBox(height: 24),
+                Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 560), child: const PromoPost())),
               ]);
           },
         ),
@@ -105,8 +113,8 @@ class _LangCard extends StatelessWidget {
     final ls = units.expand((u) => u.lessons).toList();
     final done = ls.where((l) => prog[l.id]?.passed ?? false).length;
     return Material(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18), side: const BorderSide(color: C.line)),
+      color: C.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18), side: BorderSide(color: C.line)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
@@ -119,9 +127,9 @@ class _LangCard extends StatelessWidget {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(children: [
                   Expanded(child: Text(lang.name, style: GoogleFonts.rubik(fontSize: 18, fontWeight: FontWeight.w700))),
-                  const Icon(Icons.chevron_right, color: C.ink3),
+                  Icon(Icons.chevron_right, color: C.ink3),
                 ]),
-                Text(lang.description, style: const TextStyle(color: C.ink2, fontSize: 13, height: 1.45)),
+                Text(lang.description, style: TextStyle(color: C.ink2, fontSize: 13, height: 1.45)),
                 const SizedBox(height: 8),
                 Text('${units.length} tugas · ${ls.length} pembahasan', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12.5)),
                 const SizedBox(height: 8),
@@ -130,7 +138,7 @@ class _LangCard extends StatelessWidget {
                   child: LinearProgressIndicator(value: ls.isEmpty ? 0 : done / ls.length, minHeight: 6, color: C.primary, backgroundColor: C.bg2),
                 ),
                 const SizedBox(height: 6),
-                Text(done == 0 ? 'Belum dimulai' : '$done dari ${ls.length} pembahasan selesai', style: const TextStyle(fontSize: 12, color: C.ink3)),
+                Text(done == 0 ? 'Belum dimulai' : '$done dari ${ls.length} pembahasan selesai', style: TextStyle(fontSize: 12, color: C.ink3)),
               ]),
             ),
           ]),
@@ -183,7 +191,7 @@ class LangHomeScreen extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          const Text('Dasar Pemrograman', style: TextStyle(color: C.ink3, fontSize: 12)),
+                          Text('Dasar Pemrograman', style: TextStyle(color: C.ink3, fontSize: 12)),
                           Text(lang.name, style: GoogleFonts.rubik(fontSize: 20, fontWeight: FontWeight.w700)),
                         ]),
                       ),
@@ -198,7 +206,7 @@ class LangHomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                     ],
-                    Text('${units.length} tugas', style: const TextStyle(color: C.ink3, fontWeight: FontWeight.w700, fontSize: 12.5)),
+                    Text('${units.length} tugas', style: TextStyle(color: C.ink3, fontWeight: FontWeight.w700, fontSize: 12.5)),
                     const SizedBox(height: 8),
                     ResponsiveColumns(gap: 12, children: [
                       for (var i = 0; i < units.length; i++)
@@ -226,7 +234,7 @@ class _Chip extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: C.line)),
+        decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: C.line)),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Icon(icon, size: 18, color: color),
           const SizedBox(width: 4),
@@ -242,7 +250,7 @@ class _StreakChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.fromLTRB(6, 5, 10, 5),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: C.line)),
+        decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: C.line)),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           StreakFlame(s.todayDone ? s.level : null, size: 22),
           const SizedBox(width: 6),
@@ -260,7 +268,7 @@ class _TargetCard extends StatelessWidget {
     final pct = (xp / dailyGoal).clamp(0.0, 1.0);
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: C.ink, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(color: C.night, borderRadius: BorderRadius.circular(20)),
       child: Row(children: [
         SizedBox(
           width: 56, height: 56,
@@ -317,14 +325,14 @@ class _ContinueCard extends StatelessWidget {
           Container(
             width: 48, height: 48,
             decoration: BoxDecoration(color: C.primary50, borderRadius: BorderRadius.circular(14)),
-            child: const Icon(Icons.play_arrow_rounded, color: C.primary, size: 30),
+            child: Icon(Icons.play_arrow_rounded, color: C.primary, size: 30),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Lanjutkan · $unitTitle', style: const TextStyle(color: C.ink3, fontSize: 12)),
+              Text('Lanjutkan · $unitTitle', style: TextStyle(color: C.ink3, fontSize: 12)),
               Text(lesson.title, style: GoogleFonts.rubik(fontSize: 16.5, fontWeight: FontWeight.w600)),
-              Text('Materi + tugas · ${lesson.durationMin} menit', style: const TextStyle(color: C.ink3, fontSize: 12)),
+              Text('Materi + tugas · ${lesson.durationMin} menit', style: TextStyle(color: C.ink3, fontSize: 12)),
             ]),
           ),
           FilledButton(style: FilledButton.styleFrom(minimumSize: const Size(72, 40)), onPressed: onTap, child: const Text('Mulai')),
@@ -406,10 +414,10 @@ class LessonListScreen extends StatelessWidget {
                         Text('Pembahasan · ${ls.length}', style: const TextStyle(fontWeight: FontWeight.w800)),
                         const SizedBox(height: 8),
                         Container(
-                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
+                          decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
                           child: Column(children: [
                             for (var i = 0; i < ls.length; i++) ...[
-                              if (i > 0) const Divider(height: 1, color: C.line),
+                              if (i > 0) Divider(height: 1, color: C.line),
                               _LessonRow(
                                 lesson: ls[i], no: i + 1,
                                 status: (prog[ls[i].id]?.passed ?? false) ? 'done' : (i == activeIdx ? 'act' : 'lock'),
@@ -427,7 +435,7 @@ class LessonListScreen extends StatelessWidget {
                               ? 'Semua pembahasan di tugas ini sudah selesai. Kamu bisa mengulang kapan saja.'
                               : 'Setiap pembahasan diakhiri tugas. Pembahasan berikutnya terbuka setelah tugas lulus (minimal 2 benar).',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: C.ink3, fontSize: 12.5),
+                          style: TextStyle(color: C.ink3, fontSize: 12.5),
                         ),
                       ]);
                     },
@@ -450,12 +458,12 @@ class _LessonRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final lock = status == 'lock';
     final circle = switch (status) {
-      'done' => Container(width: 36, height: 36, decoration: const BoxDecoration(color: C.reward, shape: BoxShape.circle), child: const Icon(Icons.check_rounded, color: C.ink, size: 20)),
+      'done' => Container(width: 36, height: 36, decoration: BoxDecoration(color: C.reward, shape: BoxShape.circle), child: const Icon(Icons.check_rounded, color: C.onReward, size: 20)),
       'act' => Container(
           width: 36, height: 36,
           decoration: BoxDecoration(color: C.primary, shape: BoxShape.circle, boxShadow: [BoxShadow(color: C.primary.withValues(alpha: .25), spreadRadius: 4)]),
           child: Center(child: Text('$no', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800)))),
-      _ => Container(width: 36, height: 36, decoration: const BoxDecoration(color: C.bg2, shape: BoxShape.circle), child: const Icon(Icons.lock_outline, color: C.ink3, size: 18)),
+      _ => Container(width: 36, height: 36, decoration: BoxDecoration(color: C.bg2, shape: BoxShape.circle), child: Icon(Icons.lock_outline, color: C.ink3, size: 18)),
     };
     return InkWell(
       onTap: lock ? () => toast('Selesaikan pembahasan sebelumnya dulu.') : onTap,
@@ -467,11 +475,11 @@ class _LessonRow extends StatelessWidget {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(lesson.title, style: GoogleFonts.rubik(fontWeight: FontWeight.w600, fontSize: 15, color: lock ? C.ink3 : C.ink)),
-              Text('Materi + tugas 3 soal · ${lesson.durationMin} menit · ${lesson.xp} XP', style: const TextStyle(color: C.ink3, fontSize: 12)),
+              Text('Materi + tugas 3 soal · ${lesson.durationMin} menit · ${lesson.xp} XP', style: TextStyle(color: C.ink3, fontSize: 12)),
             ]),
           ),
           switch (status) {
-            'done' => const Pill('Selesai', bg: C.reward50, fg: Color(0xFF8A5A00)),
+            'done' => Pill('Selesai', bg: C.reward50, fg: C.rewardInk),
             'act' => const Pill('Mulai'),
             _ => const Text('Terkunci', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12.5)),
           },

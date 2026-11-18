@@ -68,7 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(color: C.err50, borderRadius: BorderRadius.circular(14)),
-                    child: Text(_error!, style: const TextStyle(color: C.err, fontWeight: FontWeight.w600)),
+                    child: Text(_error!, style: TextStyle(color: C.err, fontWeight: FontWeight.w600)),
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -114,9 +114,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(color: C.primary50, borderRadius: BorderRadius.circular(14)),
                   child: Row(children: [
-                    const Icon(Icons.school_outlined, color: C.primary, size: 20),
+                    Icon(Icons.school_outlined, color: C.primary, size: 20),
                     const SizedBox(width: 10),
-                    Expanded(child: Text('Angkatan otomatis $now, sesuai tahun kamu mendaftar.', style: const TextStyle(color: C.primary, fontWeight: FontWeight.w600))),
+                    Expanded(child: Text('Angkatan otomatis $now, sesuai tahun kamu mendaftar.', style: TextStyle(color: C.primary, fontWeight: FontWeight.w600))),
                   ]),
                 ),
                 const SizedBox(height: 20),

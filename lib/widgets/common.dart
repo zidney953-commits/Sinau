@@ -63,16 +63,16 @@ class Avatar extends StatelessWidget {
 
 class Pill extends StatelessWidget {
   final String text;
-  final Color bg, fg;
+  final Color? bg, fg;
   final IconData? icon;
-  const Pill(this.text, {super.key, this.bg = C.primary50, this.fg = C.primary, this.icon});
+  const Pill(this.text, {super.key, this.bg, this.fg, this.icon});
   @override
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(99)),
+        decoration: BoxDecoration(color: bg ?? C.primary50, borderRadius: BorderRadius.circular(99)),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
-          if (icon != null) ...[Icon(icon, size: 14, color: fg), const SizedBox(width: 4)],
-          Text(text, style: TextStyle(color: fg, fontWeight: FontWeight.w700, fontSize: 12)),
+          if (icon != null) ...[Icon(icon, size: 14, color: fg ?? C.primary), const SizedBox(width: 4)],
+          Text(text, style: TextStyle(color: fg ?? C.primary, fontWeight: FontWeight.w700, fontSize: 12)),
         ]),
       );
 }
@@ -83,8 +83,9 @@ class StateView extends StatelessWidget {
   final String title, body;
   final String? action;
   final VoidCallback? onAction;
-  final Color color;
-  const StateView({super.key, required this.icon, required this.title, required this.body, this.action, this.onAction, this.color = C.primary});
+  final Color? tint;
+  const StateView({super.key, required this.icon, required this.title, required this.body, this.action, this.onAction, Color? color}) : tint = color;
+  Color get color => tint ?? C.primary;
   @override
   Widget build(BuildContext context) => Center(
         child: Padding(
@@ -98,7 +99,7 @@ class StateView extends StatelessWidget {
             const SizedBox(height: 16),
             Text(title, style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center),
             const SizedBox(height: 6),
-            Text(body, style: const TextStyle(color: C.ink2), textAlign: TextAlign.center),
+            Text(body, style: TextStyle(color: C.ink2), textAlign: TextAlign.center),
             if (action != null) ...[
               const SizedBox(height: 16),
               SizedBox(width: 200, child: FilledButton(onPressed: onAction, child: Text(action!))),

@@ -47,3 +47,7 @@ app.*.map.json
 # Pengaturan lokal Claude / editor (tidak perlu di GitHub)
 .claude/
 .mcp.json
+
+# APK: hanya versi universal yang diunggah ke GitHub (yang lain tetap di laptop)
+/apk sinau/**/*.apk
+!/apk sinau/**/*universal*.apk

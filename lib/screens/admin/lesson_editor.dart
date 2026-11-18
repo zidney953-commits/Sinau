@@ -240,7 +240,7 @@ class _LessonEditorScreenState extends State<LessonEditorScreen> {
                     TextField(controller: _points[i].$2, maxLines: 2, decoration: const InputDecoration(labelText: 'Isi poin', isDense: true)),
                   ]),
                 ),
-                IconButton(tooltip: 'Hapus poin', onPressed: () => setState(() => _points.removeAt(i)), icon: const Icon(Icons.close, color: C.ink3)),
+                IconButton(tooltip: 'Hapus poin', onPressed: () => setState(() => _points.removeAt(i)), icon: Icon(Icons.close, color: C.ink3)),
               ]),
             ),
           Align(
@@ -286,7 +286,7 @@ class _LessonEditorScreenState extends State<LessonEditorScreen> {
           IconButton(
             tooltip: 'Hapus soal',
             onPressed: _qs.length <= 1 ? null : () => setState(() => _qs.removeAt(i)),
-            icon: const Icon(Icons.delete_outline, color: C.err),
+            icon: Icon(Icons.delete_outline, color: C.err),
           ),
         ]),
         const SizedBox(height: 4),
@@ -307,7 +307,7 @@ class _LessonEditorScreenState extends State<LessonEditorScreen> {
         ],
         const SizedBox(height: 10),
         Text(mc ? 'Pilihan jawaban · pilih yang benar' : 'Blok kode · tulis sesuai URUTAN BENAR (akan diacak untuk user)',
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5, color: C.ink2)),
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5, color: C.ink2)),
         const SizedBox(height: 6),
         for (var j = 0; j < q.items.length; j++)
           Padding(
@@ -335,7 +335,7 @@ class _LessonEditorScreenState extends State<LessonEditorScreen> {
                           q.items.removeAt(j);
                           if (q.answer >= q.items.length) q.answer = 0;
                         }),
-                icon: const Icon(Icons.close, size: 18, color: C.ink3),
+                icon: Icon(Icons.close, size: 18, color: C.ink3),
               ),
             ]),
           ),

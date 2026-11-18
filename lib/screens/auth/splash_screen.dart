@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: C.ink,
+        backgroundColor: C.night,
         body: Center(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             Container(
@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
             const SizedBox(height: 6),
             const Text('Belajar pemrograman, satu level setiap hari', style: TextStyle(color: Color(0xFFB9BCD3))),
             const SizedBox(height: 40),
-            const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5, color: C.reward)),
+            SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5, color: C.reward)),
           ]),
         ),
       );

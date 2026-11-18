@@ -4,7 +4,9 @@ Aplikasi Sinau langsung terhubung ke Supabase (internet), jadi **tidak butuh loc
 
 ## Android (APK)
 
-File ada di folder `UAS/APK Sinau/`. Pilih **satu** sesuai HP:
+**Paling mudah:** buka bagian **[Download APK di README](README.md#download-apk)** dari HP, lalu download APK *universal* versi terbaru (jalan di semua HP).
+
+Versi lebih kecil per jenis HP ada di folder `UAS/APK Sinau/` (laptop). Pilih **satu** sesuai HP:
 
 | File | Ukuran | Untuk |
 |---|---|---|

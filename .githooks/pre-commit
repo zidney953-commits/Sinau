@@ -1,0 +1,7 @@
+#!/bin/sh
+# Perbarui tabel "Download APK" di README.md sebelum setiap commit.
+# Aktifkan sekali per komputer: git config core.hooksPath .githooks
+PY=$(command -v python || command -v python3)
+[ -z "$PY" ] && exit 0
+"$PY" scripts/update_readme_apk.py >/dev/null 2>&1 && git add README.md
+exit 0

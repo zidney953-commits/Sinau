@@ -38,7 +38,7 @@ class AppShell extends StatelessWidget {
         body: body,
         floatingActionButton: fab,
         bottomNavigationBar: Container(
-          decoration: const BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: C.line))),
+          decoration: BoxDecoration(color: C.surface, border: Border(top: BorderSide(color: C.line))),
           child: SafeArea(
             top: false,
             child: SizedBox(
@@ -57,7 +57,7 @@ class AppShell extends StatelessWidget {
       body: Row(children: [
         Container(
           width: laptop ? 232 : 88,
-          decoration: const BoxDecoration(color: Colors.white, border: Border(right: BorderSide(color: C.line))),
+          decoration: BoxDecoration(color: C.surface, border: Border(right: BorderSide(color: C.line))),
           child: SafeArea(
             child: Column(children: [
               Padding(
@@ -89,8 +89,8 @@ class _Badge extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         constraints: const BoxConstraints(minWidth: 17, minHeight: 17),
-        decoration: BoxDecoration(color: C.reward, borderRadius: BorderRadius.circular(9), border: Border.all(color: Colors.white, width: 2)),
-        child: Center(child: Text('$n', style: const TextStyle(color: C.ink, fontSize: 10, fontWeight: FontWeight.w800))),
+        decoration: BoxDecoration(color: C.reward, borderRadius: BorderRadius.circular(9), border: Border.all(color: C.surface, width: 2)),
+        child: Center(child: Text('$n', style: const TextStyle(color: C.onReward, fontSize: 10, fontWeight: FontWeight.w800))),
       );
 }
 
@@ -174,7 +174,7 @@ class PageHeader extends StatelessWidget {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(title, style: GoogleFonts.rubik(fontSize: 22, fontWeight: FontWeight.w700, color: C.ink)),
-              if (subtitle != null) Text(subtitle!, style: const TextStyle(color: C.ink3, fontSize: 12.5)),
+              if (subtitle != null) Text(subtitle!, style: TextStyle(color: C.ink3, fontSize: 12.5)),
             ]),
           ),
           ?trailing,
@@ -192,10 +192,10 @@ class SectionCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         width: double.infinity,
         padding: padding,
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
+        decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           if (title != null) Text(title!, style: GoogleFonts.rubik(fontSize: 16, fontWeight: FontWeight.w600)),
-          if (subtitle != null) Padding(padding: const EdgeInsets.only(top: 2), child: Text(subtitle!, style: const TextStyle(color: C.ink3, fontSize: 12.5))),
+          if (subtitle != null) Padding(padding: const EdgeInsets.only(top: 2), child: Text(subtitle!, style: TextStyle(color: C.ink3, fontSize: 12.5))),
           if (title != null) const SizedBox(height: 12),
           child,
         ]),

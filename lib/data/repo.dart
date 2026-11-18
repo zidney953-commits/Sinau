@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
 import '../core/api.dart';
+import '../core/config.dart';
 import 'models.dart';
 
 /// Semua akses data Sinau lewat Supabase REST API.
@@ -110,4 +115,13 @@ class Repo {
       (await _api.select('feedback', {'select': '*,profiles(name)', 'order': 'created_at.desc'})).map(FeedbackItem.fromJson).toList();
 
   static Future<void> setFeedbackStatus(int id, String status) => _api.update('feedback', {'id': 'eq.$id'}, {'status': status});
+
+  // ---------- Berita TI ----------
+  /// GET /functions/v1/tech-news — berita teknologi terbaru (publik).
+  static Future<List<NewsItem>> techNews() async {
+    final r = await http.get(Uri.parse('${AppConfig.supabaseUrl}/functions/v1/tech-news')).timeout(const Duration(seconds: 20));
+    if (r.statusCode != 200) throw 'Berita gagal dimuat (${r.statusCode})';
+    final items = (jsonDecode(utf8.decode(r.bodyBytes))['items'] as List).cast<Map<String, dynamic>>();
+    return items.map(NewsItem.fromJson).where((n) => n.title.isNotEmpty).toList();
+  }
 }

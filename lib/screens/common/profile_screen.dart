@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../controllers/auth_controller.dart';
+import '../../controllers/theme_controller.dart';
 import '../../core/api.dart';
 import '../../core/config.dart';
 import '../../core/theme.dart';
@@ -38,7 +39,7 @@ class ProfileScreen extends StatelessWidget {
                 child: Stack(children: [
                   Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(shape: BoxShape.circle, color: C.primary50),
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: C.primary50),
                     child: Avatar(p.name, url: p.avatarUrl, size: 92),
                   ),
                   if (!p.isAdmin)
@@ -46,7 +47,7 @@ class ProfileScreen extends StatelessWidget {
                       right: 0, bottom: 0,
                       child: Material(
                         color: C.primary,
-                        shape: const CircleBorder(side: BorderSide(color: Colors.white, width: 3)),
+                        shape: CircleBorder(side: BorderSide(color: C.bg, width: 3)),
                         child: InkWell(
                           customBorder: const CircleBorder(),
                           onTap: () => _photoSheet(p.avatarUrl != null),
@@ -58,12 +59,12 @@ class ProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Center(child: Text(p.name, style: GoogleFonts.rubik(fontSize: 20, fontWeight: FontWeight.w700))),
-              Center(child: Text(p.email, style: const TextStyle(color: C.ink3))),
+              Center(child: Text(p.email, style: TextStyle(color: C.ink3))),
               const SizedBox(height: 8),
               Center(
                 child: Wrap(spacing: 6, children: [
                   Pill(p.isAdmin ? 'Admin' : 'User', icon: p.isAdmin ? Icons.shield_outlined : Icons.school_outlined),
-                  if (p.angkatan != null) Pill('Angkatan ${p.angkatan}', bg: C.bg2, fg: C.ink2),
+                  if (!p.isAdmin && p.angkatan != null) Pill('Angkatan ${p.angkatan}', bg: C.bg2, fg: C.ink2),
                 ]),
               ),
               const SizedBox(height: 18),
@@ -72,23 +73,27 @@ class ProfileScreen extends StatelessWidget {
               const Text('Informasi akun', style: TextStyle(fontWeight: FontWeight.w800)),
               const SizedBox(height: 8),
               Container(
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
+                decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
                 child: Column(children: [
                   _InfoRow(Icons.person_outline, 'Nama', p.name),
-                  const Divider(height: 1, color: C.line),
+                  Divider(height: 1, color: C.line),
                   _InfoRow(Icons.mail_outline, 'Email', p.email),
-                  const Divider(height: 1, color: C.line),
-                  _InfoRow(Icons.school_outlined, 'Angkatan', p.angkatan?.toString() ?? '-'),
+                  if (!p.isAdmin) ...[
+                    Divider(height: 1, color: C.line),
+                    _InfoRow(Icons.school_outlined, 'Angkatan', p.angkatan?.toString() ?? '-'),
+                  ],
                 ]),
               ),
               const SizedBox(height: 12),
+              const _ThemePicker(),
+              const SizedBox(height: 12),
               Material(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18), side: const BorderSide(color: C.line)),
+                color: C.surface,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18), side: BorderSide(color: C.line)),
                 clipBehavior: Clip.antiAlias,
                 child: InkWell(
                   onTap: () => Get.to(() => const AboutScreen()),
-                  child: const Padding(
+                  child: Padding(
                     padding: EdgeInsets.all(14),
                     child: Row(children: [
                       _IconBox(Icons.info_outline_rounded),
@@ -106,7 +111,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(foregroundColor: C.err, side: const BorderSide(color: C.err50, width: 1.5)),
+                style: OutlinedButton.styleFrom(foregroundColor: C.err, side: BorderSide(color: C.err50, width: 1.5)),
                 onPressed: () async {
                   if (await confirm('Keluar dari Sinau?', 'Kamu perlu masuk lagi untuk melanjutkan belajar. Progres tetap tersimpan.', ok: 'Keluar', danger: true)) {
                     await auth.signOut();
@@ -116,7 +121,7 @@ class ProfileScreen extends StatelessWidget {
                 label: const Text('Keluar'),
               ),
               const SizedBox(height: 12),
-              const Center(child: Text('Sinau v${AppConfig.version}', style: TextStyle(color: C.ink3, fontSize: 12))),
+              Center(child: Text('Sinau v${AppConfig.version}', style: TextStyle(color: C.ink3, fontSize: 12))),
             ]),
           ),
         ]);
@@ -129,7 +134,7 @@ class ProfileScreen extends StatelessWidget {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-        decoration: const BoxDecoration(color: C.bg, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+        decoration: BoxDecoration(color: C.bg, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Center(child: Container(width: 40, height: 5, decoration: BoxDecoration(color: C.line, borderRadius: BorderRadius.circular(5)))),
           const SizedBox(height: 14),
@@ -139,8 +144,8 @@ class ProfileScreen extends StatelessWidget {
           ListTile(leading: const Icon(Icons.photo_library_outlined), title: const Text('Pilih dari galeri'), onTap: () => _pick(ImageSource.gallery)),
           if (hasPhoto)
             ListTile(
-              leading: const Icon(Icons.delete_outline, color: C.err),
-              title: const Text('Hapus foto', style: TextStyle(color: C.err)),
+              leading: Icon(Icons.delete_outline, color: C.err),
+              title: Text('Hapus foto', style: TextStyle(color: C.err)),
               onTap: _remove,
             ),
         ]),
@@ -223,12 +228,64 @@ class _InfoRow extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(label, style: const TextStyle(color: C.ink3, fontSize: 12)),
+              Text(label, style: TextStyle(color: C.ink3, fontSize: 12)),
               Text(value, style: const TextStyle(fontWeight: FontWeight.w800)),
             ]),
           ),
         ]),
       );
+}
+
+/// Pilihan tampilan: Terang / Gelap / Sistem.
+class _ThemePicker extends StatelessWidget {
+  const _ThemePicker();
+  static const _icons = {ThemeMode.light: Icons.light_mode_outlined, ThemeMode.dark: Icons.dark_mode_outlined, ThemeMode.system: Icons.settings_suggest_outlined};
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Get.find<ThemeController>();
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          _IconBox(Icons.palette_outlined),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('Tampilan', style: TextStyle(fontWeight: FontWeight.w800)),
+              Text('Terang, gelap, atau ikut sistem perangkat', style: TextStyle(color: C.ink3, fontSize: 12)),
+            ]),
+          ),
+        ]),
+        const SizedBox(height: 12),
+        Obx(() => Row(children: [
+              for (final m in ThemeController.labels.keys) ...[
+                if (m != ThemeMode.light) const SizedBox(width: 8),
+                Expanded(
+                  child: Material(
+                    color: t.mode.value == m ? C.primary : C.bg2,
+                    borderRadius: BorderRadius.circular(12),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => t.setMode(m),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Column(children: [
+                          Icon(_icons[m], size: 20, color: t.mode.value == m ? Colors.white : C.ink2),
+                          const SizedBox(height: 2),
+                          Text(ThemeController.labels[m]!,
+                              style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: t.mode.value == m ? Colors.white : C.ink2)),
+                        ]),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ])),
+      ]),
+    );
+  }
 }
 
 class _IconBox extends StatelessWidget {
@@ -295,7 +352,7 @@ class _StreakCard extends StatelessWidget {
                 ? 'Hari terakhir! Capai target hari ini atau streak kembali ke 0.'
                 : 'Capai target harian untuk menyalakan hari ini.';
     return Material(
-      color: C.ink,
+      color: C.night,
       borderRadius: BorderRadius.circular(18),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -333,7 +390,7 @@ class _StreakCard extends StatelessWidget {
                 ]),
             ]),
             const SizedBox(height: 12),
-            const Row(children: [
+            Row(children: [
               Icon(Icons.calendar_month_rounded, size: 16, color: C.reward),
               SizedBox(width: 6),
               Expanded(child: Text('Ketuk untuk melihat kalender streak & level warna.', style: TextStyle(fontSize: 12.5, color: Color(0xFFB9BCD3)))),
@@ -359,30 +416,30 @@ class _KebunCard extends StatelessWidget {
     final nextK = stage + 1 < _kebun.length ? _kebun[stage + 1] : null;
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: C.ok50, borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0xFFBFE6D3))),
+      decoration: BoxDecoration(color: C.ok50, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.okLine)),
       child: Row(children: [
         Container(
           width: 72, height: 80,
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+          decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(16)),
           child: Icon(k.$4, size: 46, color: C.ok),
         ),
         const SizedBox(width: 14),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('KEBUN SINAU', style: TextStyle(color: C.ok, fontWeight: FontWeight.w800, fontSize: 11.5, letterSpacing: .6)),
+            Text('KEBUN SINAU', style: TextStyle(color: C.ok, fontWeight: FontWeight.w800, fontSize: 11.5, letterSpacing: .6)),
             Text(k.$2, style: GoogleFonts.rubik(fontSize: 18, fontWeight: FontWeight.w700)),
-            Text(k.$3, style: const TextStyle(color: C.ink2, fontSize: 13)),
+            Text(k.$3, style: TextStyle(color: C.ink2, fontSize: 13)),
             if (nextK != null) ...[
               const SizedBox(height: 8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(6),
                 child: LinearProgressIndicator(
                   value: ((streak - k.$1) / (nextK.$1 - k.$1)).clamp(0.0, 1.0),
-                  minHeight: 6, color: C.ok, backgroundColor: Colors.white,
+                  minHeight: 6, color: C.ok, backgroundColor: C.surface,
                 ),
               ),
               const SizedBox(height: 4),
-              Text('${nextK.$1 - streak} hari lagi menjadi ${nextK.$2}', style: const TextStyle(fontSize: 12, color: C.ink2, fontWeight: FontWeight.w700)),
+              Text('${nextK.$1 - streak} hari lagi menjadi ${nextK.$2}', style: TextStyle(fontSize: 12, color: C.ink2, fontWeight: FontWeight.w700)),
             ],
           ]),
         ),

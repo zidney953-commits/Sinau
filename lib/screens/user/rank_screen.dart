@@ -34,7 +34,7 @@ class RankScreen extends StatelessWidget {
                       duration: const Duration(milliseconds: 180),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
-                        color: c.lang.value == l.$1 ? Colors.white : Colors.transparent,
+                        color: c.lang.value == l.$1 ? C.surface : Colors.transparent,
                         borderRadius: BorderRadius.circular(11),
                         boxShadow: c.lang.value == l.$1 ? const [BoxShadow(color: Color(0x14000000), blurRadius: 6, offset: Offset(0, 2))] : null,
                       ),
@@ -61,27 +61,27 @@ class RankScreen extends StatelessWidget {
                     Text('Peringkat ${c.langName} · urut XP ${c.langName}', style: const TextStyle(fontWeight: FontWeight.w800)),
                     const SizedBox(height: 8),
                     if (rows.isEmpty)
-                      const StateView(icon: Icons.emoji_events_outlined, color: C.reward, title: 'Belum ada peringkat', body: 'Jadilah yang pertama menyelesaikan pembahasan di bahasa ini.')
+                      StateView(icon: Icons.emoji_events_outlined, color: C.reward, title: 'Belum ada peringkat', body: 'Jadilah yang pertama menyelesaikan pembahasan di bahasa ini.')
                     else
                       Container(
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
+                        decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
                         child: Column(children: [
                           for (var i = 0; i < rows.length; i++) ...[
-                            if (i > 0) const Divider(height: 1, color: C.line),
+                            if (i > 0) Divider(height: 1, color: C.line),
                             _RankRow(rank: i + 1, row: rows[i], me: rows[i]['user_id'] == me.id),
                           ],
                         ]),
                       ),
                     const SizedBox(height: 12),
                     Text('Hanya pengguna yang sudah menyelesaikan pembahasan ${c.langName}. XP dihitung dari belajar ${c.langName} saja.',
-                        textAlign: TextAlign.center, style: const TextStyle(color: C.ink3, fontSize: 12.5)),
+                        textAlign: TextAlign.center, style: TextStyle(color: C.ink3, fontSize: 12.5)),
                   ]),
                   if (!me.isAdmin)
                     Positioned(
                       left: 20, right: 20, bottom: 84,
                       child: Container(
                         padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(color: C.ink, borderRadius: BorderRadius.circular(16)),
+                        decoration: BoxDecoration(color: C.night, borderRadius: BorderRadius.circular(16)),
                         child: Row(children: [
                           Avatar(me.name, url: me.avatarUrl, size: 34),
                           const SizedBox(width: 10),
@@ -113,7 +113,7 @@ class _RankRow extends StatelessWidget {
   const _RankRow({required this.rank, required this.row, required this.me});
   @override
   Widget build(BuildContext context) {
-    const medal = [C.reward, Color(0xFFA6A9BC), Color(0xFFC07A3A)];
+    final medal = [C.reward, Color(0xFFA6A9BC), Color(0xFFC07A3A)];
     return Container(
       color: me ? C.primary50 : null,
       padding: const EdgeInsets.all(12),
@@ -129,7 +129,7 @@ class _RankRow extends StatelessWidget {
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('${row['name']}${me ? ' (kamu)' : ''}', style: GoogleFonts.rubik(fontWeight: FontWeight.w600)),
-            Text('${row['lessons_done']} pembahasan selesai', style: const TextStyle(color: C.ink3, fontSize: 12)),
+            Text('${row['lessons_done']} pembahasan selesai', style: TextStyle(color: C.ink3, fontSize: 12)),
           ]),
         ),
         Text('${row['xp']} XP', style: GoogleFonts.rubik(fontWeight: FontWeight.w700)),

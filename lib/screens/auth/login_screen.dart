@@ -17,7 +17,7 @@ class AuthFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     if (MediaQuery.sizeOf(context).width < 600) return Scaffold(body: child);
     return Scaffold(
-      backgroundColor: C.ink,
+      backgroundColor: C.night,
       body: Center(
         child: Container(
           margin: const EdgeInsets.all(24),
@@ -41,7 +41,7 @@ class AuthHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         width: double.infinity,
-        color: C.ink,
+        color: C.night,
         padding: EdgeInsets.fromLTRB(24, MediaQuery.of(context).padding.top + 28, 24, 36),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
@@ -51,7 +51,7 @@ class AuthHero extends StatelessWidget {
               child: const Center(child: LogoMark(size: 24)),
             ),
             const SizedBox(width: 10),
-            Text('MACHINE LEARNING', style: GoogleFonts.rubik(color: Colors.white70, fontSize: 12, letterSpacing: 1.4, fontWeight: FontWeight.w600)),
+            Text('PEMBELAJARAN CODE', style: GoogleFonts.rubik(color: Colors.white70, fontSize: 12, letterSpacing: 1.4, fontWeight: FontWeight.w600)),
           ]),
           const SizedBox(height: 26),
           Text(title, style: GoogleFonts.rubik(color: Colors.white, fontSize: 36, fontWeight: FontWeight.w700)),
@@ -94,16 +94,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                   Text('Masuk', style: Theme.of(context).textTheme.headlineSmall),
                   const SizedBox(height: 4),
-                  const Text('Gunakan akun Sinau kamu.', style: TextStyle(color: C.ink2)),
+                  Text('Gunakan akun Sinau kamu.', style: TextStyle(color: C.ink2)),
                   const SizedBox(height: 20),
                   if (_error != null) ...[
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(color: C.err50, borderRadius: BorderRadius.circular(14)),
                       child: Row(children: [
-                        const Icon(Icons.error_outline, color: C.err),
+                        Icon(Icons.error_outline, color: C.err),
                         const SizedBox(width: 10),
-                        Expanded(child: Text(_error!, style: const TextStyle(color: C.err, fontWeight: FontWeight.w600))),
+                        Expanded(child: Text(_error!, style: TextStyle(color: C.err, fontWeight: FontWeight.w600))),
                       ]),
                     ),
                     const SizedBox(height: 16),
@@ -142,10 +142,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       )),
                   const SizedBox(height: 18),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    const Text('Belum punya akun? ', style: TextStyle(color: C.ink2)),
+                    Text('Belum punya akun? ', style: TextStyle(color: C.ink2)),
                     GestureDetector(
                       onTap: () => Get.toNamed('/register'),
-                      child: const Text('Daftar', style: TextStyle(color: C.primary, fontWeight: FontWeight.w800)),
+                      child: Text('Daftar', style: TextStyle(color: C.primary, fontWeight: FontWeight.w800)),
                     ),
                   ]),
                 ]),

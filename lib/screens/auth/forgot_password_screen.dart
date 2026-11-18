@@ -116,9 +116,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(color: C.err50, borderRadius: BorderRadius.circular(14)),
                     child: Row(children: [
-                      const Icon(Icons.error_outline, color: C.err),
+                      Icon(Icons.error_outline, color: C.err),
                       const SizedBox(width: 10),
-                      Expanded(child: Text(_err!, style: const TextStyle(color: C.err, fontWeight: FontWeight.w600))),
+                      Expanded(child: Text(_err!, style: TextStyle(color: C.err, fontWeight: FontWeight.w600))),
                     ]),
                   ),
                   const SizedBox(height: 14),
@@ -155,7 +155,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget _emailStep() => Form(
         key: _k1,
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const Text('Masukkan email akun Sinau kamu. Kami akan mengirim kode verifikasi ke email itu.', style: TextStyle(color: C.ink2, height: 1.5)),
+          Text('Masukkan email akun Sinau kamu. Kami akan mengirim kode verifikasi ke email itu.', style: TextStyle(color: C.ink2, height: 1.5)),
           const SizedBox(height: 16),
           TextFormField(
             controller: _email,
@@ -170,9 +170,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       );
 
   Widget _codeStep() => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text.rich(TextSpan(style: const TextStyle(color: C.ink2, height: 1.5), children: [
+        Text.rich(TextSpan(style: TextStyle(color: C.ink2, height: 1.5), children: [
           const TextSpan(text: 'Kode verifikasi sudah dikirim ke '),
-          TextSpan(text: _email.text.trim(), style: const TextStyle(fontWeight: FontWeight.w800, color: C.ink)),
+          TextSpan(text: _email.text.trim(), style: TextStyle(fontWeight: FontWeight.w800, color: C.ink)),
           const TextSpan(text: '. Cek kotak masuk atau folder Spam. Kode berlaku 1 jam.'),
         ])),
         const SizedBox(height: 16),
@@ -192,10 +192,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         _button('Verifikasi kode', _verify),
         const SizedBox(height: 10),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Text('Belum menerima kode? ', style: TextStyle(color: C.ink2)),
+          Text('Belum menerima kode? ', style: TextStyle(color: C.ink2)),
           _wait > 0
-              ? Text('Kirim ulang (${_wait}s)', style: const TextStyle(color: C.ink3, fontWeight: FontWeight.w800))
-              : GestureDetector(onTap: _busy ? null : _sendCode, child: const Text('Kirim ulang', style: TextStyle(color: C.primary, fontWeight: FontWeight.w800))),
+              ? Text('Kirim ulang (${_wait}s)', style: TextStyle(color: C.ink3, fontWeight: FontWeight.w800))
+              : GestureDetector(onTap: _busy ? null : _sendCode, child: Text('Kirim ulang', style: TextStyle(color: C.primary, fontWeight: FontWeight.w800))),
         ]),
         TextButton(onPressed: () => setState(() => _step = 0), child: const Text('Ganti email')),
       ]);
@@ -203,7 +203,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget _passStep() => Form(
         key: _k3,
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const Text('Kode benar. Buat kata sandi baru untuk akunmu.', style: TextStyle(color: C.ink2)),
+          Text('Kode benar. Buat kata sandi baru untuk akunmu.', style: TextStyle(color: C.ink2)),
           const SizedBox(height: 16),
           TextFormField(
             controller: _pass,

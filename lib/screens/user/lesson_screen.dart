@@ -103,7 +103,7 @@ class _LessonScreenState extends State<LessonScreen> {
           const SizedBox(height: 10),
           Text(widget.lesson.title, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 10),
-          Text(m['intro'] ?? '', style: const TextStyle(fontSize: 15.5, height: 1.55, color: C.ink2)),
+          Text(m['intro'] ?? '', style: TextStyle(fontSize: 15.5, height: 1.55, color: C.ink2)),
           const SizedBox(height: 16),
           for (final p in points)
             Padding(
@@ -114,7 +114,7 @@ class _LessonScreenState extends State<LessonScreen> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(p[0], style: Theme.of(context).textTheme.titleSmall),
                     const SizedBox(height: 3),
-                    Text(p[1], style: const TextStyle(color: C.ink2, height: 1.45)),
+                    Text(p[1], style: TextStyle(color: C.ink2, height: 1.45)),
                   ]),
                 ),
               ),
@@ -126,9 +126,9 @@ class _LessonScreenState extends State<LessonScreen> {
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(color: C.reward50, borderRadius: BorderRadius.circular(16)),
               child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Icon(Icons.lightbulb_outline, color: Color(0xFF8A5A00)),
+                Icon(Icons.lightbulb_outline, color: C.rewardInk),
                 const SizedBox(width: 10),
-                Expanded(child: Text(m['tip'], style: const TextStyle(color: Color(0xFF5C3D00), height: 1.45))),
+                Expanded(child: Text(m['tip'], style: TextStyle(color: C.rewardInk2, height: 1.45))),
               ]),
             ),
           ],
@@ -170,7 +170,7 @@ class _LessonScreenState extends State<LessonScreen> {
   Widget _option(Question q, int i) {
     final sel = _sel == i;
     Color border = sel ? C.primary : C.line;
-    Color bg = sel ? C.primary50 : Colors.white;
+    Color bg = sel ? C.primary50 : C.surface;
     if (_checked && i == q.answer) {
       border = C.ok;
       bg = C.ok50;
@@ -210,11 +210,11 @@ class _LessonScreenState extends State<LessonScreen> {
         constraints: const BoxConstraints(minHeight: 90),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(16),
+          color: C.surface, borderRadius: BorderRadius.circular(16),
           border: Border.all(color: _checked ? (_right ? C.ok : C.err) : C.line, width: 2),
         ),
         child: _order.isEmpty
-            ? const Center(child: Text('Ketuk blok di bawah sesuai urutan yang benar', style: TextStyle(color: C.ink3)))
+            ? Center(child: Text('Ketuk blok di bawah sesuai urutan yang benar', style: TextStyle(color: C.ink3)))
             : Column(children: [
                 for (var i = 0; i < _order.length; i++)
                   _block('${i + 1}. ${q.blocks[_order[i]]}', C.primary50, _checked ? null : () => setState(() => _order.removeAt(i))),
@@ -246,7 +246,7 @@ class _LessonScreenState extends State<LessonScreen> {
     final head = (t['head'] as List).cast<String>();
     final rows = (t['rows'] as List).map((r) => (r as List).cast<String>()).toList();
     TableRow row(List<String> cells, {bool h = false}) => TableRow(
-          decoration: BoxDecoration(color: h ? C.bg2 : Colors.white),
+          decoration: BoxDecoration(color: h ? C.bg2 : C.surface),
           children: [
             for (final c in cells)
               Padding(
@@ -268,7 +268,7 @@ class _LessonScreenState extends State<LessonScreen> {
         decoration: BoxDecoration(color: _right ? C.ok50 : C.err50, borderRadius: BorderRadius.circular(16)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(_right ? 'Benar!' : 'Belum tepat', style: GoogleFonts.rubik(fontWeight: FontWeight.w600, color: _right ? C.ok : C.err, fontSize: 16)),
-          if (q.explanation != null) ...[const SizedBox(height: 4), Text(q.explanation!, style: const TextStyle(color: C.ink2))],
+          if (q.explanation != null) ...[const SizedBox(height: 4), Text(q.explanation!, style: TextStyle(color: C.ink2))],
         ]),
       );
 
@@ -289,10 +289,10 @@ class _LessonScreenState extends State<LessonScreen> {
               const SizedBox(height: 20),
               Text(passed ? 'Pembahasan lulus!' : 'Belum lulus', style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: 6),
-              Text('Benar $_correct dari $n soal (minimal ${passMin(n)}).', style: const TextStyle(color: C.ink2)),
+              Text('Benar $_correct dari $n soal (minimal ${passMin(n)}).', style: TextStyle(color: C.ink2)),
               const SizedBox(height: 16),
-              if (passed && first) Pill('+${widget.lesson.xp} XP', bg: C.reward50, fg: const Color(0xFF8A5A00), icon: Icons.bolt),
-              if (!passed) const Text('Baca lagi materinya, lalu coba sekali lagi.', style: TextStyle(color: C.ink3)),
+              if (passed && first) Pill('+${widget.lesson.xp} XP', bg: C.reward50, fg: C.rewardInk, icon: Icons.bolt),
+              if (!passed) Text('Baca lagi materinya, lalu coba sekali lagi.', style: TextStyle(color: C.ink3)),
             ]),
           ),
         ),
@@ -311,7 +311,7 @@ class CodeBlock extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         width: double.infinity,
         padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(color: C.ink, borderRadius: BorderRadius.circular(14)),
+        decoration: BoxDecoration(color: C.night, borderRadius: BorderRadius.circular(14)),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Text(code, style: GoogleFonts.jetBrainsMono(color: const Color(0xFFE6E7F2), fontSize: 13, height: 1.5)),

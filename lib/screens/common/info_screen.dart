@@ -9,10 +9,10 @@ import '../../data/models.dart';
 import '../../widgets/common.dart';
 import '../../widgets/responsive.dart';
 
-const postCats = {
+Map<String, (String, IconData, Color, Color)> get postCats => {
   'tentang': ('Tentang aplikasi', Icons.info_outline, C.primary, C.primary50),
   'update': ('Pembaruan aplikasi', Icons.refresh, C.ok, C.ok50),
-  'umum': ('Pengumuman', Icons.campaign_outlined, Color(0xFF8A5A00), C.reward50),
+  'umum': ('Pengumuman', Icons.campaign_outlined, C.rewardInk, C.reward50),
 };
 
 const _bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
@@ -83,12 +83,12 @@ class _PostCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Pill(c.$1, icon: c.$2, fg: c.$3, bg: c.$4),
-          if (post.pinned) ...[const SizedBox(width: 6), const Pill('Disematkan', icon: Icons.star_border_rounded, fg: Color(0xFF8A5A00), bg: C.reward50)],
+          if (post.pinned) ...[const SizedBox(width: 6), Pill('Disematkan', icon: Icons.star_border_rounded, fg: C.rewardInk, bg: C.reward50)],
           const Spacer(),
           if (admin)
             IconButton(
               tooltip: 'Hapus',
-              icon: const Icon(Icons.delete_outline, color: C.err),
+              icon: Icon(Icons.delete_outline, color: C.err),
               onPressed: () async {
                 if (!await confirm('Hapus informasi?', '“${post.title}” akan hilang dari tab Informasi pengguna.', ok: 'Hapus', danger: true)) return;
                 try {
@@ -103,9 +103,9 @@ class _PostCard extends StatelessWidget {
         const SizedBox(height: 10),
         Text(post.title, style: GoogleFonts.rubik(fontSize: 17, fontWeight: FontWeight.w600)),
         const SizedBox(height: 6),
-        Text(post.body, style: const TextStyle(color: C.ink2, height: 1.55)),
+        Text(post.body, style: TextStyle(color: C.ink2, height: 1.55)),
         const SizedBox(height: 10),
-        Text(fmtDate(post.createdAt), style: const TextStyle(color: C.ink3, fontSize: 12)),
+        Text(fmtDate(post.createdAt), style: TextStyle(color: C.ink3, fontSize: 12)),
       ]),
     );
   }
@@ -126,7 +126,7 @@ class _PostFormState extends State<_PostForm> {
   @override
   Widget build(BuildContext context) => Container(
         padding: EdgeInsets.fromLTRB(20, 12, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
-        decoration: const BoxDecoration(color: C.bg, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+        decoration: BoxDecoration(color: C.bg, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
         child: Form(
           key: _key,
           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [

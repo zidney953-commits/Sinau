@@ -6,10 +6,10 @@ import '../../core/theme.dart';
 import '../../data/repo.dart';
 import '../../widgets/common.dart';
 
-const feedbackTypes = {
+Map<String, (String, IconData, Color, Color)> get feedbackTypes => {
   'saran': ('Saran', Icons.auto_awesome_outlined, C.primary, C.primary50),
   'error': ('Error aplikasi', Icons.error_outline, C.err, C.err50),
-  'soal': ('Soal/materi salah', Icons.flag_outlined, Color(0xFF8A5A00), C.reward50),
+  'soal': ('Soal/materi salah', Icons.flag_outlined, C.rewardInk, C.reward50),
 };
 
 /// Kirim masukan ke admin (tabel feedback). Halaman asal ikut dicatat sebagai konteks.
@@ -45,14 +45,14 @@ class _FeedbackSheetState extends State<FeedbackSheet> {
   @override
   Widget build(BuildContext context) => Container(
         padding: EdgeInsets.fromLTRB(20, 12, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
-        decoration: const BoxDecoration(color: C.bg, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+        decoration: BoxDecoration(color: C.bg, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
         child: SafeArea(
           top: false,
           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             Center(child: Container(width: 40, height: 5, decoration: BoxDecoration(color: C.line, borderRadius: BorderRadius.circular(5)))),
             const SizedBox(height: 14),
             Text('Kirim masukan', style: GoogleFonts.rubik(fontSize: 20, fontWeight: FontWeight.w700)),
-            Text('Dari halaman ${widget.page}. Admin akan membacanya.', style: const TextStyle(color: C.ink3)),
+            Text('Dari halaman ${widget.page}. Admin akan membacanya.', style: TextStyle(color: C.ink3)),
             const SizedBox(height: 14),
             Wrap(spacing: 8, runSpacing: 8, children: [
               for (final e in feedbackTypes.entries)

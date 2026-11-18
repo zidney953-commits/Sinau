@@ -38,7 +38,7 @@ class StreakScreen extends StatelessWidget {
                       const SizedBox(height: 16),
                       _Levels(current: d.streak.level),
                       const SizedBox(height: 14),
-                      const Text(
+                      Text(
                         'Hari menyala jika target harian $dailyGoal XP tercapai (100%). '
                         'Streak kembali ke 0 jika $streakGraceDays hari berturut-turut tidak menyala.',
                         textAlign: TextAlign.center,
@@ -71,7 +71,7 @@ class _Summary extends StatelessWidget {
         );
     return Container(
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(color: C.ink, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(color: C.night, borderRadius: BorderRadius.circular(20)),
       child: Column(children: [
         StreakFlame(s.todayDone ? lv : null, size: 76, offColor: const Color(0xFF2B2F48)),
         const SizedBox(height: 12),
@@ -121,7 +121,7 @@ class _Calendar extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
+      decoration: BoxDecoration(color: C.surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line)),
       child: Column(children: [
         Row(children: [
           IconButton(onPressed: () => c.shift(-1), icon: const Icon(Icons.chevron_left), tooltip: 'Bulan sebelumnya'),
@@ -138,11 +138,11 @@ class _Calendar extends StatelessWidget {
           ),
           IconButton(onPressed: c.canNext ? () => c.shift(1) : null, icon: const Icon(Icons.chevron_right), tooltip: 'Bulan berikutnya'),
         ]),
-        Text('$lit hari menyala di bulan ini', style: const TextStyle(color: C.ink3, fontSize: 12.5, fontWeight: FontWeight.w700)),
+        Text('$lit hari menyala di bulan ini', style: TextStyle(color: C.ink3, fontSize: 12.5, fontWeight: FontWeight.w700)),
         const SizedBox(height: 12),
         Row(children: [
           for (final h in _hari)
-            Expanded(child: Center(child: Text(h, style: const TextStyle(color: C.ink3, fontSize: 12, fontWeight: FontWeight.w800)))),
+            Expanded(child: Center(child: Text(h, style: TextStyle(color: C.ink3, fontSize: 12, fontWeight: FontWeight.w800)))),
         ]),
         const SizedBox(height: 6),
         LayoutBuilder(builder: (_, box) {
@@ -164,7 +164,7 @@ class _Calendar extends StatelessWidget {
         Wrap(spacing: 14, runSpacing: 6, alignment: WrapAlignment.center, children: [
           _Legend(color: (s.level ?? streakLevels.first).color, label: 'Menyala (warna sesuai level)'),
           const _Legend(color: Color(0xFFF6D58E), label: 'Belajar, belum 100%', ring: true),
-          const _Legend(color: C.primary, label: 'Hari ini', ring: true),
+          _Legend(color: C.primary, label: 'Hari ini', ring: true),
         ]),
       ]),
     );
@@ -217,14 +217,14 @@ class _Picker extends StatelessWidget {
   @override
   Widget build(BuildContext context) => PopupMenuButton<int>(
         onSelected: onSelected,
-        color: Colors.white,
+        color: C.surface,
         itemBuilder: (_) => [for (final i in items) PopupMenuItem(value: i.$1, enabled: i.$3, child: Text(i.$2))],
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(color: C.primary50, borderRadius: BorderRadius.circular(10)),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             Text(label, style: GoogleFonts.rubik(fontWeight: FontWeight.w700, fontSize: 16, color: C.ink)),
-            const Icon(Icons.arrow_drop_down, color: C.primary),
+            Icon(Icons.arrow_drop_down, color: C.primary),
           ]),
         ),
       );
@@ -246,7 +246,7 @@ class _Legend extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 5),
-        Text(label, style: const TextStyle(fontSize: 11.5, color: C.ink2)),
+        Text(label, style: TextStyle(fontSize: 11.5, color: C.ink2)),
       ]);
 }
 
@@ -273,7 +273,7 @@ class _Levels extends StatelessWidget {
                 Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text('Level ${l.level} · ${l.name}', style: const TextStyle(fontWeight: FontWeight.w800)),
-                    Text(l.range, style: const TextStyle(color: C.ink3, fontSize: 12)),
+                    Text(l.range, style: TextStyle(color: C.ink3, fontSize: 12)),
                   ]),
                 ),
                 if (current?.level == l.level) const Pill('Sekarang'),
