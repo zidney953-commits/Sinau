@@ -28,14 +28,14 @@ class UserShell extends StatelessWidget {
           NavItem(Icons.person_outline, Icons.person, 'Profil'),
         ],
         pages: const [LearnScreen(), InfoScreen(), RankScreen(), ProfileScreen()],
-        fab: FloatingActionButton.extended(
+        fab: FloatingActionButton(
           heroTag: 'fb',
+          tooltip: 'Kirim saran atau laporkan error',
           backgroundColor: C.ink,
           foregroundColor: Colors.white,
           elevation: 2,
           onPressed: () => Get.bottomSheet(FeedbackSheet(page: _names[nav.tab.value]), isScrollControlled: true),
-          icon: const Icon(Icons.chat_bubble_outline_rounded, size: 20),
-          label: const Text('Ada saran atau error?', style: TextStyle(fontWeight: FontWeight.w700)),
+          child: const Icon(Icons.chat_bubble_outline_rounded, size: 22),
         ),
       ));
   }

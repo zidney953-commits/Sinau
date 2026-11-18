@@ -4,12 +4,14 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../controllers/auth_controller.dart';
 import '../../core/api.dart';
+import '../../core/config.dart';
 import '../../core/theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../data/repo.dart';
 import '../../widgets/common.dart';
 import '../../widgets/responsive.dart';
+import 'about_screen.dart';
 
 /// Profil (pengguna & admin). Hanya pengguna biasa yang bisa mengganti foto.
 class ProfileScreen extends StatelessWidget {
@@ -77,6 +79,29 @@ class ProfileScreen extends StatelessWidget {
                   _InfoRow(Icons.school_outlined, 'Angkatan', p.angkatan?.toString() ?? '-'),
                 ]),
               ),
+              const SizedBox(height: 12),
+              Material(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18), side: const BorderSide(color: C.line)),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () => Get.to(() => const AboutScreen()),
+                  child: const Padding(
+                    padding: EdgeInsets.all(14),
+                    child: Row(children: [
+                      _IconBox(Icons.info_outline_rounded),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text('Tentang Aplikasi', style: TextStyle(fontWeight: FontWeight.w800)),
+                          Text('Versi ${AppConfig.version} · Powered by ${AppConfig.brand}', style: TextStyle(color: C.ink3, fontSize: 12)),
+                        ]),
+                      ),
+                      Icon(Icons.chevron_right, color: C.ink3),
+                    ]),
+                  ),
+                ),
+              ),
               const SizedBox(height: 18),
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(foregroundColor: C.err, side: const BorderSide(color: C.err50, width: 1.5)),
@@ -89,7 +114,7 @@ class ProfileScreen extends StatelessWidget {
                 label: const Text('Keluar'),
               ),
               const SizedBox(height: 12),
-              const Center(child: Text('Sinau v1.0', style: TextStyle(color: C.ink3, fontSize: 12))),
+              const Center(child: Text('Sinau v${AppConfig.version}', style: TextStyle(color: C.ink3, fontSize: 12))),
             ]),
           ),
         ]);
@@ -192,11 +217,7 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.all(14),
         child: Row(children: [
-          Container(
-            width: 36, height: 36,
-            decoration: BoxDecoration(color: C.primary50, borderRadius: BorderRadius.circular(11)),
-            child: Icon(icon, color: C.primary, size: 19),
-          ),
+          _IconBox(icon),
           const SizedBox(width: 12),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -205,6 +226,17 @@ class _InfoRow extends StatelessWidget {
             ]),
           ),
         ]),
+      );
+}
+
+class _IconBox extends StatelessWidget {
+  final IconData icon;
+  const _IconBox(this.icon);
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 36, height: 36,
+        decoration: BoxDecoration(color: C.primary50, borderRadius: BorderRadius.circular(11)),
+        child: Icon(icon, color: C.primary, size: 19),
       );
 }
 

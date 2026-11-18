@@ -560,7 +560,7 @@ class FeedbackTab extends StatelessWidget {
                     ]),
                     const SizedBox(height: 10),
                     if (xs.isEmpty)
-                      const StateView(icon: Icons.chat_bubble_outline_rounded, title: 'Belum ada masukan', body: 'Masukan dari tombol “Ada saran atau error?” akan muncul di sini.'),
+                      const StateView(icon: Icons.chat_bubble_outline_rounded, title: 'Belum ada masukan', body: 'Masukan dari tombol pesan (ikon chat) di aplikasi user akan muncul di sini.'),
                     ResponsiveColumns(children: [for (final f in xs) _card(f)]),
                   ]);
                 },

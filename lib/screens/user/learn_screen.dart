@@ -16,7 +16,7 @@ const dailyGoal = 30;
 const unitIcons = [Icons.memory_rounded, Icons.data_object_rounded, Icons.call_split_rounded, Icons.loop_rounded];
 const unitColor = Color(0xFF5B4FD6);
 
-/// Tab Belajar · pilih bahasa.
+/// Tab Belajar: sapaan (foto & nama), target harian, lalu pilih bahasa.
 class LearnScreen extends StatelessWidget {
   const LearnScreen({super.key});
   LearnController get c => Get.find<LearnController>();
@@ -24,16 +24,34 @@ class LearnScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final p = Get.find<AuthController>().profile.value!;
+    final auth = Get.find<AuthController>();
     return SafeArea(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        PageHeader('Belajar', subtitle: 'Pilih bahasa pemrograman', trailing: Avatar(p.name, url: p.avatarUrl, size: 38)),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: () async => _reload(),
-            child: ObxLoad<LearnData>(
-              controller: c,
-              builder: (d) => ListView(padding: const EdgeInsets.fromLTRB(20, 0, 20, 100), children: [
+      child: RefreshIndicator(
+        onRefresh: () async => _reload(),
+        child: ObxLoad<LearnData>(
+          controller: c,
+          builder: (d) {
+            final p = auth.profile.value!;
+            return ListView(padding: const EdgeInsets.fromLTRB(20, 16, 20, 100), children: [
+                Row(children: [
+                  Avatar(p.name, url: p.avatarUrl, size: 44),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      const Text('Halo,', style: TextStyle(color: C.ink3, fontSize: 12)),
+                      Text(p.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.rubik(fontSize: 20, fontWeight: FontWeight.w700)),
+                    ]),
+                  ),
+                  _Chip(Icons.bolt_rounded, '${p.streak}', C.reward),
+                  const SizedBox(width: 8),
+                  _Chip(Icons.star_rounded, '${d.xpTotal}', C.primary),
+                ]),
+                const SizedBox(height: 16),
+                _TargetCard(xp: d.xpToday),
+                const SizedBox(height: 22),
+                Text('Belajar', style: GoogleFonts.rubik(fontSize: 22, fontWeight: FontWeight.w700)),
+                const Text('Pilih bahasa pemrograman', style: TextStyle(color: C.ink3, fontSize: 12.5)),
+                const SizedBox(height: 10),
                 const Text('Mau belajar dasar pemrograman dengan bahasa apa? Materi dan tugasnya sama, hanya contoh kodenya yang berbeda.',
                     style: TextStyle(color: C.ink2, height: 1.5)),
                 const SizedBox(height: 16),
@@ -44,11 +62,10 @@ class LearnScreen extends StatelessWidget {
                       _reload();
                     }),
                 ]),
-              ]),
-            ),
-          ),
+              ]);
+          },
         ),
-      ]),
+      ),
     );
   }
 }
@@ -114,7 +131,7 @@ class _LangCard extends StatelessWidget {
   }
 }
 
-/// Beranda satu bahasa: sapaan, target harian, lanjutkan, dan daftar Tugas 1–4.
+/// Beranda satu bahasa: lanjutkan dan daftar Tugas 1–4.
 class LangHomeScreen extends StatelessWidget {
   final Language lang;
   const LangHomeScreen({super.key, required this.lang});
@@ -128,7 +145,6 @@ class LangHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = Get.find<AuthController>();
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -137,7 +153,6 @@ class LangHomeScreen extends StatelessWidget {
             child: ObxLoad<LearnData>(
               controller: c,
               builder: (d) {
-                final p = auth.profile.value!;
                 final units = d.units[lang.id]!.where((u) => u.lessons.isNotEmpty).toList();
                 Lesson? next;
                 int nextUnit = 0;
@@ -150,40 +165,30 @@ class LangHomeScreen extends StatelessWidget {
                     }
                   }
                 }
-                final top = [
-                  _TargetCard(xp: d.xpToday),
-                  if (next != null)
-                    _ContinueCard(
-                      unitTitle: units[nextUnit].title,
-                      lesson: next,
-                      onTap: () => _open(LessonScreen(lesson: next!, prev: d.prog[next.id])),
-                    ),
-                ];
                 return RefreshIndicator(
                   onRefresh: () async => _reload(),
                   child: ListView(padding: const EdgeInsets.fromLTRB(20, 12, 20, 40), children: [
                     Row(children: [
                       IconButton(onPressed: Get.back, icon: const Icon(Icons.chevron_left, size: 28), padding: EdgeInsets.zero, visualDensity: VisualDensity.compact),
-                      Avatar(p.name, url: p.avatarUrl, size: 40),
+                      LangTile(lang, size: 30),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          const Text('Halo,', style: TextStyle(color: C.ink3, fontSize: 12)),
-                          Text(p.name, style: GoogleFonts.rubik(fontSize: 18, fontWeight: FontWeight.w700)),
+                          const Text('Dasar Pemrograman', style: TextStyle(color: C.ink3, fontSize: 12)),
+                          Text(lang.name, style: GoogleFonts.rubik(fontSize: 20, fontWeight: FontWeight.w700)),
                         ]),
                       ),
-                      _Chip(Icons.bolt_rounded, '${p.streak}', C.reward),
-                      const SizedBox(width: 8),
-                      _Chip(Icons.star_rounded, '${d.xpTotal}', C.primary),
-                    ]),
-                    const SizedBox(height: 16),
-                    ResponsiveColumns(children: top),
-                    Row(children: [
-                      LangTile(lang, size: 22),
-                      const SizedBox(width: 8),
-                      Expanded(child: Text('Dasar Pemrograman · ${lang.name}', style: const TextStyle(fontWeight: FontWeight.w800))),
                       TextButton(onPressed: Get.back, child: const Text('Ganti bahasa', style: TextStyle(fontWeight: FontWeight.w800))),
                     ]),
+                    const SizedBox(height: 16),
+                    if (next != null) ...[
+                      _ContinueCard(
+                        unitTitle: units[nextUnit].title,
+                        lesson: next,
+                        onTap: () => _open(LessonScreen(lesson: next!, prev: d.prog[next.id])),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                     Text('${units.length} tugas', style: const TextStyle(color: C.ink3, fontWeight: FontWeight.w700, fontSize: 12.5)),
                     const SizedBox(height: 8),
                     ResponsiveColumns(gap: 12, children: [
