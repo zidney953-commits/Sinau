@@ -8,11 +8,11 @@ import '../../controllers/app_controllers.dart';
 import '../../controllers/auth_controller.dart';
 import '../../core/theme.dart';
 import '../../data/models.dart';
+import '../../data/streak.dart';
 import '../../widgets/common.dart';
 import '../../widgets/responsive.dart';
 import 'lesson_screen.dart';
 
-const dailyGoal = 30;
 const unitIcons = [Icons.memory_rounded, Icons.data_object_rounded, Icons.call_split_rounded, Icons.loop_rounded];
 const unitColor = Color(0xFF5B4FD6);
 
@@ -42,12 +42,12 @@ class LearnScreen extends StatelessWidget {
                       Text(p.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.rubik(fontSize: 20, fontWeight: FontWeight.w700)),
                     ]),
                   ),
-                  _Chip(Icons.bolt_rounded, '${p.streak}', C.reward),
+                  _StreakChip(d.streak),
                   const SizedBox(width: 8),
                   _Chip(Icons.star_rounded, '${d.xpTotal}', C.primary),
                 ]),
                 const SizedBox(height: 16),
-                _TargetCard(xp: d.xpToday),
+                _TargetCard(xp: d.xpToday, lastChance: d.streak.lastChance),
                 const SizedBox(height: 22),
                 Text('Belajar', style: GoogleFonts.rubik(fontSize: 22, fontWeight: FontWeight.w700)),
                 const Text('Pilih bahasa pemrograman', style: TextStyle(color: C.ink3, fontSize: 12.5)),
@@ -70,6 +70,9 @@ class LearnScreen extends StatelessWidget {
   }
 }
 
+/// Logo resmi tiap bahasa (assets/icon). Bahasa lain memakai singkatan teks.
+const langLogos = {'python': 'assets/icon/python.webp', 'java': 'assets/icon/java.png'};
+
 class LangTile extends StatelessWidget {
   final Language lang;
   final double size;
@@ -77,10 +80,16 @@ class LangTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Color(lang.color);
+    final logo = langLogos[lang.id];
     return Container(
       width: size, height: size * 1.25,
-      decoration: BoxDecoration(color: c.withValues(alpha: .1), borderRadius: BorderRadius.circular(14)),
-      child: Center(child: Text(lang.mono, style: GoogleFonts.jetBrainsMono(color: c, fontWeight: FontWeight.w800, fontSize: size * .3))),
+      padding: EdgeInsets.all(size * .14),
+      decoration: BoxDecoration(color: c.withValues(alpha: .1), borderRadius: BorderRadius.circular(size * .22)),
+      child: Center(
+        child: logo != null
+            ? Image.asset(logo, fit: BoxFit.contain, semanticLabel: 'Logo ${lang.name}', filterQuality: FilterQuality.medium)
+            : Text(lang.mono, style: GoogleFonts.jetBrainsMono(color: c, fontWeight: FontWeight.w800, fontSize: size * .3)),
+      ),
     );
   }
 }
@@ -226,9 +235,26 @@ class _Chip extends StatelessWidget {
       );
 }
 
+/// Chip streak di sapaan: warna petir mengikuti level streak.
+class _StreakChip extends StatelessWidget {
+  final StreakInfo s;
+  const _StreakChip(this.s);
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.fromLTRB(6, 5, 10, 5),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: C.line)),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          StreakFlame(s.todayDone ? s.level : null, size: 22),
+          const SizedBox(width: 6),
+          Text('${s.current}', style: GoogleFonts.rubik(fontWeight: FontWeight.w700)),
+        ]),
+      );
+}
+
 class _TargetCard extends StatelessWidget {
   final int xp;
-  const _TargetCard({required this.xp});
+  final bool lastChance;
+  const _TargetCard({required this.xp, this.lastChance = false});
   @override
   Widget build(BuildContext context) {
     final pct = (xp / dailyGoal).clamp(0.0, 1.0);
@@ -248,7 +274,12 @@ class _TargetCard extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('Target harian · ${math.min(xp, dailyGoal)}/$dailyGoal XP', style: GoogleFonts.rubik(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16)),
             const SizedBox(height: 2),
-            Text(pct >= 1 ? 'Target tercapai. Streak aman hari ini!' : 'Selesaikan 1 pelajaran lagi untuk menjaga streak.',
+            Text(
+                pct >= 1
+                    ? 'Target tercapai. Streak hari ini menyala!'
+                    : lastChance
+                        ? 'Hari terakhir! Capai target hari ini atau streak kembali ke 0.'
+                        : 'Kumpulkan ${dailyGoal - xp} XP lagi agar streak hari ini menyala.',
                 style: const TextStyle(color: Color(0xFFB9BCD3), fontSize: 13)),
           ]),
         ),

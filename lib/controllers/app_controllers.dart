@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 import '../data/models.dart';
 import '../data/repo.dart';
+import '../data/streak.dart';
+import 'auth_controller.dart';
 
 /// Dasar semua controller yang memuat data dari REST API.
 /// State-nya reaktif (.obs): data, loading, error → dibaca layar lewat Obx (lihat ObxLoad).
@@ -40,15 +42,16 @@ class NavController extends GetxController {
 
 // ============================ USER ============================
 
-String _today() => DateTime.now().toIso8601String().substring(0, 10);
-
 class LearnData {
   final List<Language> langs;
   final Map<String, List<Unit>> units;
   final Map<int, LessonProgress> prog;
   final List<Map<String, dynamic>> done;
-  LearnData(this.langs, this.units, this.prog, this.done);
-  int get xpToday => done.where((d) => (d['completed_at'] ?? '').toString().startsWith(_today())).fold(0, (a, d) => a + (d['xp_earned'] as int? ?? 0));
+  LearnData(this.langs, this.units, this.prog, this.done) : streak = StreakInfo.from(done);
+
+  /// Streak & XP per hari (tanggal lokal), dihitung dari riwayat lulus.
+  final StreakInfo streak;
+  int get xpToday => streak.xpToday;
   int get xpTotal => prog.values.fold(0, (a, p) => a + p.xpEarned);
 }
 
@@ -58,7 +61,18 @@ class LearnController extends LoadController<LearnData> {
   Future<LearnData> fetch() async {
     final langs = await Repo.languages();
     final units = {for (final l in langs) l.id: await Repo.units(l.id)};
-    return LearnData(langs, units, await Repo.myProgress(), await Repo.myCompletions());
+    final d = LearnData(langs, units, await Repo.myProgress(), await Repo.myCompletions());
+    _syncStreak(d.streak);
+    return d;
+  }
+
+  /// Simpan streak hasil hitungan ke profil (dipakai papan peringkat & data admin).
+  void _syncStreak(StreakInfo s) {
+    final auth = Get.find<AuthController>();
+    final p = auth.profile.value;
+    final last = s.lastActive?.toIso8601String().substring(0, 10);
+    if (p == null || (p.streak == s.current && p.lastActive == last)) return;
+    auth.updateProfile({'streak': s.current, 'last_active': last}).catchError((_) {});
   }
 }
 
@@ -216,4 +230,20 @@ class AdminBinding extends Bindings {
     Get.put(FeedbackController());
     Get.put(InfoController());
   }
+}
+
+/// Halaman detail streak: bulan & tahun kalender yang sedang dilihat.
+class StreakController extends GetxController {
+  final month = DateTime.utc(DateTime.now().year, DateTime.now().month).obs;
+  DateTime get thisMonth => DateTime.utc(DateTime.now().year, DateTime.now().month);
+  bool get canNext => month.value.isBefore(thisMonth);
+
+  void shift(int n) {
+    final m = DateTime.utc(month.value.year, month.value.month + n);
+    if (!m.isAfter(thisMonth)) month.value = m;
+  }
+
+  void setMonth(int m) => _set(DateTime.utc(month.value.year, m));
+  void setYear(int y) => _set(DateTime.utc(y, month.value.month));
+  void _set(DateTime m) => month.value = m.isAfter(thisMonth) ? thisMonth : m;
 }

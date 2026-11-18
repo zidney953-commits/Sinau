@@ -8,7 +8,9 @@ import '../../core/config.dart';
 import '../../core/theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../data/repo.dart';
+import '../../controllers/app_controllers.dart';
+import '../../data/streak.dart';
+import '../user/streak_screen.dart';
 import '../../widgets/common.dart';
 import '../../widgets/responsive.dart';
 import 'about_screen.dart';
@@ -65,7 +67,7 @@ class ProfileScreen extends StatelessWidget {
                 ]),
               ),
               const SizedBox(height: 18),
-              if (!p.isAdmin) _StreakKebun(streak: p.streak),
+              if (!p.isAdmin) const _StreakKebun(),
               const SizedBox(height: 6),
               const Text('Informasi akun', style: TextStyle(fontWeight: FontWeight.w800)),
               const SizedBox(height: 8),
@@ -249,106 +251,142 @@ const _kebun = [
   (30, 'Pohon berbuah', 'Sebulan konsisten, pohonmu berbuah!', Icons.park_rounded),
 ];
 
-/// Kartu streak (7 hari terakhir) + Kebun Sinau, seperti prototipe.
-class _StreakKebun extends StatefulWidget {
-  final int streak;
-  const _StreakKebun({required this.streak});
+/// Kartu streak (7 hari terakhir) + Kebun Sinau. Data dari LearnController (sama dengan halaman Belajar).
+class _StreakKebun extends StatelessWidget {
+  const _StreakKebun();
+
   @override
-  State<_StreakKebun> createState() => _StreakKebunState();
+  Widget build(BuildContext context) {
+    final c = Get.find<LearnController>();
+    return Obx(() {
+      final d = c.data.value;
+      if (d == null) {
+        return const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator()));
+      }
+      final s = d.streak;
+      return Column(children: [
+        _StreakCard(s: s, onTap: () => Get.to(() => const StreakScreen(), binding: BindingsBuilder(() {
+          Get.put(StreakController());
+        }))),
+        const SizedBox(height: 12),
+        _KebunCard(streak: s.current),
+        const SizedBox(height: 16),
+      ]);
+    });
+  }
 }
 
-class _StreakKebunState extends State<_StreakKebun> {
-  late final Future<List<Map<String, dynamic>>> _f = Repo.myCompletions();
+class _StreakCard extends StatelessWidget {
+  final StreakInfo s;
+  final VoidCallback onTap;
+  const _StreakCard({required this.s, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     const hari = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-    final now = DateTime.now();
-    final days = List.generate(7, (i) => now.subtract(Duration(days: 6 - i)));
-    var stage = 0;
-    for (var i = 0; i < _kebun.length; i++) {
-      if (widget.streak >= _kebun[i].$1) stage = i;
-    }
-    final k = _kebun[stage];
-    final nextK = stage + 1 < _kebun.length ? _kebun[stage + 1] : null;
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _f,
-      builder: (_, s) {
-        final active = {for (final r in s.data ?? const []) (r['completed_at'] ?? '').toString().substring(0, 10)};
-        return Column(children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: const Color(0xFFFFF8EA), borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0xFFF6D58E))),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                Container(
-                  width: 48, height: 48,
-                  decoration: BoxDecoration(color: C.reward, borderRadius: BorderRadius.circular(14)),
-                  child: const Icon(Icons.bolt_rounded, color: C.ink, size: 30),
-                ),
-                const SizedBox(width: 12),
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('${widget.streak} hari', style: GoogleFonts.rubik(fontSize: 24, fontWeight: FontWeight.w700)),
-                  Text(widget.streak > 0 ? 'Streak hari ini sudah menyala!' : 'Belajar hari ini untuk menyalakan streak', style: const TextStyle(color: C.ink2, fontSize: 13)),
-                ]),
-              ]),
-              const SizedBox(height: 14),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                for (var i = 0; i < 7; i++)
-                  Column(children: [
-                    Container(
-                      width: 30, height: 30,
-                      decoration: BoxDecoration(color: active.contains(days[i].toIso8601String().substring(0, 10)) ? C.reward : C.bg2, shape: BoxShape.circle),
-                      child: Icon(Icons.bolt_rounded, size: 17, color: active.contains(days[i].toIso8601String().substring(0, 10)) ? C.ink : C.ink3),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(i == 6 ? 'Hari ini' : hari[days[i].weekday - 1],
-                        style: TextStyle(fontSize: 11, fontWeight: i == 6 ? FontWeight.w800 : FontWeight.w600, color: i == 6 ? C.ink : C.ink3)),
-                  ]),
-              ]),
-              const SizedBox(height: 12),
-              const Row(children: [
-                Icon(Icons.star_rounded, size: 16, color: C.reward),
-                SizedBox(width: 6),
-                Expanded(child: Text('Hadiah streak: setiap hari belajar menjaga streak tetap menyala.', style: TextStyle(fontSize: 12.5, color: C.ink2))),
-              ]),
-            ]),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: C.ok50, borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0xFFBFE6D3))),
-            child: Row(children: [
-              Container(
-                width: 72, height: 80,
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
-                child: Icon(k.$4, size: 46, color: C.ok),
-              ),
+    final today = todayKey();
+    final days = List.generate(7, (i) => today.subtract(Duration(days: 6 - i)));
+    final lv = s.level;
+    final status = s.todayDone
+        ? 'Streak hari ini sudah menyala!'
+        : s.current == 0
+            ? 'Capai target harian $dailyGoal XP untuk memulai streak.'
+            : s.lastChance
+                ? 'Hari terakhir! Capai target hari ini atau streak kembali ke 0.'
+                : 'Capai target harian untuk menyalakan hari ini.';
+    return Material(
+      color: C.ink,
+      borderRadius: BorderRadius.circular(18),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              StreakFlame(s.todayDone ? lv : null, size: 52, offColor: const Color(0xFF2B2F48)),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text('KEBUN SINAU', style: TextStyle(color: C.ok, fontWeight: FontWeight.w800, fontSize: 11.5, letterSpacing: .6)),
-                  Text(k.$2, style: GoogleFonts.rubik(fontSize: 18, fontWeight: FontWeight.w700)),
-                  Text(k.$3, style: const TextStyle(color: C.ink2, fontSize: 13)),
-                  if (nextK != null) ...[
-                    const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: LinearProgressIndicator(
-                        value: ((widget.streak - k.$1) / (nextK.$1 - k.$1)).clamp(0.0, 1.0),
-                        minHeight: 6, color: C.ok, backgroundColor: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text('${nextK.$1 - widget.streak} hari lagi menjadi ${nextK.$2}', style: const TextStyle(fontSize: 12, color: C.ink2, fontWeight: FontWeight.w700)),
-                  ],
+                  Text('${s.current} hari', style: GoogleFonts.rubik(fontSize: 24, fontWeight: FontWeight.w700, color: Colors.white)),
+                  Text(status, style: const TextStyle(color: Color(0xFFB9BCD3), fontSize: 13)),
                 ]),
               ),
+              const Icon(Icons.chevron_right, color: Color(0xFFB9BCD3)),
             ]),
-          ),
-          const SizedBox(height: 16),
-        ]);
-      },
+            if (lv != null) ...[
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(color: lv.color.withValues(alpha: .16), borderRadius: BorderRadius.circular(20), border: Border.all(color: lv.color.withValues(alpha: .6))),
+                child: Text('Level ${lv.level} · ${lv.name}', style: TextStyle(color: lv.level == 1 ? const Color(0xFFFF8A80) : lv.color, fontWeight: FontWeight.w800, fontSize: 12)),
+              ),
+            ],
+            const SizedBox(height: 14),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              for (var i = 0; i < 7; i++)
+                Column(children: [
+                  StreakFlame(s.levelOn(days[i]), size: 30, offColor: const Color(0xFF2B2F48)),
+                  const SizedBox(height: 4),
+                  Text(i == 6 ? 'Hari ini' : hari[days[i].weekday - 1],
+                      style: TextStyle(fontSize: 11, fontWeight: i == 6 ? FontWeight.w800 : FontWeight.w600, color: i == 6 ? Colors.white : const Color(0xFF8E91AB))),
+                ]),
+            ]),
+            const SizedBox(height: 12),
+            const Row(children: [
+              Icon(Icons.calendar_month_rounded, size: 16, color: C.reward),
+              SizedBox(width: 6),
+              Expanded(child: Text('Ketuk untuk melihat kalender streak & level warna.', style: TextStyle(fontSize: 12.5, color: Color(0xFFB9BCD3)))),
+            ]),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+class _KebunCard extends StatelessWidget {
+  final int streak;
+  const _KebunCard({required this.streak});
+
+  @override
+  Widget build(BuildContext context) {
+    var stage = 0;
+    for (var i = 0; i < _kebun.length; i++) {
+      if (streak >= _kebun[i].$1) stage = i;
+    }
+    final k = _kebun[stage];
+    final nextK = stage + 1 < _kebun.length ? _kebun[stage + 1] : null;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(color: C.ok50, borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0xFFBFE6D3))),
+      child: Row(children: [
+        Container(
+          width: 72, height: 80,
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+          child: Icon(k.$4, size: 46, color: C.ok),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('KEBUN SINAU', style: TextStyle(color: C.ok, fontWeight: FontWeight.w800, fontSize: 11.5, letterSpacing: .6)),
+            Text(k.$2, style: GoogleFonts.rubik(fontSize: 18, fontWeight: FontWeight.w700)),
+            Text(k.$3, style: const TextStyle(color: C.ink2, fontSize: 13)),
+            if (nextK != null) ...[
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(
+                  value: ((streak - k.$1) / (nextK.$1 - k.$1)).clamp(0.0, 1.0),
+                  minHeight: 6, color: C.ok, backgroundColor: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text('${nextK.$1 - streak} hari lagi menjadi ${nextK.$2}', style: const TextStyle(fontSize: 12, color: C.ink2, fontWeight: FontWeight.w700)),
+            ],
+          ]),
+        ),
+      ]),
     );
   }
 }

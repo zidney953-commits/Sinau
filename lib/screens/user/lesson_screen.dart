@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../controllers/auth_controller.dart';
 import '../../core/theme.dart';
 import '../../data/models.dart';
 import '../../data/repo.dart';
@@ -44,7 +43,6 @@ class _LessonScreenState extends State<LessonScreen> {
       final passed = _correct >= passMin(n);
       try {
         await Repo.saveProgress(widget.lesson.id, passed: passed, correct: _correct, total: n, prev: widget.prev);
-        if (passed) await _bumpStreak();
       } catch (e) {
         toast('Hasil belum tersimpan: $e', error: true);
       }
@@ -60,16 +58,6 @@ class _LessonScreenState extends State<LessonScreen> {
       _order = [];
       _checked = false;
     });
-  }
-
-  Future<void> _bumpStreak() async {
-    final auth = Get.find<AuthController>();
-    final p = auth.profile.value!;
-    String d(DateTime t) => t.toIso8601String().substring(0, 10);
-    final now = DateTime.now();
-    final today = d(now), yesterday = d(now.subtract(const Duration(days: 1)));
-    if (p.lastActive == today) return;
-    await auth.updateProfile({'last_active': today, 'streak': p.lastActive == yesterday ? p.streak + 1 : 1});
   }
 
   @override

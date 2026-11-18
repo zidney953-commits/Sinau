@@ -10,8 +10,8 @@ class AppConfig {
   static const storageUrl = '$supabaseUrl/storage/v1';
 
   /// Versi aplikasi: [aplikasi ke-].[update ke-].[bulan],[tahun]
-  /// 1 = aplikasi kedua PATRICX, 1 = update pertama, 11,26 = November 2026.
-  static const version = '1.1.11,26';
+  /// 1 = aplikasi kedua KELOMPOK-4, 2 = update kedua, 11,26 = November 2026.
+  static const version = '1.2.11,26';
   static const releaseDate = '17/11/2026';
-  static const brand = 'PATRICX';
+  static const brand = 'KELOMPOK-4';
 }
